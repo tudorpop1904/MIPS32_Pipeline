@@ -1,0 +1,33 @@
+O scurtă descriere a proiectului:
+
+Procesorul MIPS Pipeline pe 32 de biți reprezintă o improvizare din punct de vedere al eficienței în timp a procesorului MIPS
+Single Cycle pe 32 de biți. Improvizarea provine din adăugarea a patru registre de eșantionare a datelor curente, registre
+care apar între fiecare etaje consecutive dintre cele 5 etaje de procesare a unei instrucțiuni în cod mașină. Astfel, cele
+patru registre sunt următoarele: IF/ID, ID/EX, EX/MEM, și MEM/WB. Consecința eșantionării datelor de la un etaj la altul este
+că instrucțiunile nu mai trebuie să se execute în aceeași durată de execuție a căii critice (cea dată de către instrucțiunea
+Load Word), ci, în schimb, câte o instrucțiune nouă își începe execuția la fiecare ciclu de ceas. Pentru o reprezentare
+vizuală a acestui efect, se pot consulta diagramele de execuție pipeline din cadrul documentelor "Fibonacci Without Fixed
+Hazards.xlsx" și "ACFibonacciFixedHazards.xlsx".
+
+Noțiunea de Hazarduri:
+
+În paragraful anterior, cuvântul "Hazards" este un cuvânt cheie. O consecință negativă a execuției instrucțiunilor la
+fiecare ciclu de ceas este următoarea: Să presupunem că la prima instrucțiune, componenta de Write Back (WB) dorește să
+stocheze o anumită valoare în cadrul registrului de la adresa $3. Acum, să presupunem că următoarea instrucțiune dorește să
+acceseze valoarea salvată la adresa $3 ca și operand. Problema este următoarea: prima instrucțiune pornește de la ciclul 1,
+iar componenta WB se execută abia în ciclul 5. În schimb, a doua instrucțiune pornește de la ciclul 2, și componenta ID
+(responsabilă cu alegerea operanzilor) se execută în ciclul 3. Așadar, WB nu salvează în timp util valoarea dorită în 
+registrul $3, care să fie accesată ca și operand pentru următoarea instrucțiune. Pentru a evita acest "hazard", se întârzie
+voluntar execuția programului cu două cicluri de ceas, prin inserarea de operații nule (NOOP = no operation). Însă, această
+soluție încă nu este completă. Momentan, componenta WB din instrucțiunea 1, și componenta ID din instrucțiunea 2 se execută
+în al cincilea ciclu de ceas, însă, precum în cazul firelor de execuție, nu putem avea o anumită siguranță în raport cu care
+dintre aceste componente își încheie execuția prima dată. Pentru a rezolva acest hazard, se mai poate adăuga un NOOP, sau,
+pentru scopurile eficienței, se poate observa că un ciclu de ceas este format din două componente (la momente de timp diferite)
+respectiv: frontul descendent al ceasului (1 -> 0), și frontul ascendent (0 -> 1). Putem, astfel, să impunem componenta WB
+să se execute pe frontul descendent, și componenta ID să se execute pe frontul ascendent, rezolvând în totalitate hazardul.
+
+Referitor la funcționalitatea programului:
+
+Nu a fost întâmpinată nicio problemă la rularea sintezei, implementări, și generării fișierului de secvență binară. Mai mult,
+schema RTL elaborată a procesorului dă de înțeles faptul că programul ar trebui să fie funcțional. Însă, programul NU a fost
+testat pe plăcuță, așadar, funcționalitatea sa este momentan nedeterminată.
